@@ -1,3 +1,39 @@
+## IdeaCloud: The Power of Collaboration
+# Why and How to Use?
+
+## Datasets
+ insert dataset links
+ 
+# Technology Stack
+## Miro
+
+## Application
+### Next.js with Typescript
+
+### OAuth
+
+### Miro WebSDK
+
+### Miro RestAPI
+
+
+## Hosting
+ - vercel
+ - Host app
+
+ - 
+
+# What 
+
+## How to use
+
+## How to install
+ - add redirect Link 
+
+## Thesis
+"Perspectives Unleashed: Harnessing the Power of Collective Collaboration through Information Visualization"
+- thesis link
+
 ## Create a Miro app
 
 ### How to start locally
