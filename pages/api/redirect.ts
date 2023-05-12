@@ -14,7 +14,7 @@ export default async function handler(
     res.send('Missing code in the query');
     return;
   }
-
+  console.log('code: ', req.query.code );
   await miro.exchangeCodeForAccessToken('', req.query.code);
   res.redirect('/');
 }

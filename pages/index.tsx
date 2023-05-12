@@ -1,9 +1,10 @@
 import {GetServerSideProps} from 'next';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import initMiro from '../initMiro';
 import Image from 'next/image';
 
-import congratulations from '../public/congratulations.png';
+import IdeaCloud from './IdeaCloud';
+import { start } from 'repl';
 
 export const getServerSideProps: GetServerSideProps =
   async function getServerSideProps({req}) {
@@ -35,46 +36,66 @@ export const getServerSideProps: GetServerSideProps =
   };
 
 export default function Main({boards}: {boards: string[]}) {
+  const [panelOpen, setPanelOpen] = useState(false);
+  const [view, setView] = useState(<div></div>);
+
   useEffect(() => {
+    setView(<WelcomeScreen></WelcomeScreen>);
+
     if (new URLSearchParams(window.location.search).has('panel')) return;
 
     window.miro.board.ui.on('icon:click', async () => {
       window.miro.board.ui.openPanel({
         url: `/?panel=1`,
       });
+      startNodeExplorer();
     });
+
   }, []);
+
+  const startNodeExplorer = () => {
+    console.log("startNodeExplorer")
+    setView(<IdeaCloud></IdeaCloud>)
+  }
+
 
   return (
     <div className="grid wrapper">
       <div className="cs1 ce12">
-        <Image src={congratulations} alt="Congratulations text" />
-      </div>
-      <div className="cs1 ce12">
-        <h1>Congratulations!</h1>
-        <p>You've just created your first Miro app!</p>
-        <p>This is a list of all the boards that your user has access to:</p>
-
-        <ul>
-          {boards.map((board, idx) => (
-            <li key={idx}>{board}</li>
-          ))}
-        </ul>
-
-        <p>
-          To explore more and build your own app, see the Miro Developer
-          Platform documentation.
-        </p>
-      </div>
-      <div className="cs1 ce12">
-        <a
-          className="button button-primary"
-          target="_blank"
-          href="https://developers.miro.com"
-        >
-          Read the documentation
-        </a>
+        { view }
       </div>
     </div>
   );
+}
+
+const WelcomeScreen = () => {
+  return (
+    <div className="welcome-screen">
+      <h1>NodeExplorer</h1>
+      <h2>Object of Play</h2>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
+        </p>
+        <h2>Number of Players</h2>
+        <p>
+          1-???
+        </p>
+        <h2>Duration of Play</h2>
+        <p>
+          5 minutes - ???
+        </p>
+        <h2>How to Play</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
+          </p>
+        <h2>Strategy</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
+          </p>
+        <h2>Additional Information</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
+          </p>
+        </div>
+  )
 }
