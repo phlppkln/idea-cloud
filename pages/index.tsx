@@ -62,7 +62,7 @@ export default function Main({boards}: {boards: string[]}) {
   return (
     <div className="grid wrapper">
       <div className="cs1 ce12">
-        { view }
+        <IdeaCloud></IdeaCloud>
       </div>
     </div>
   );

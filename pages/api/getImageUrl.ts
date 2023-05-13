@@ -7,21 +7,25 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { miro } = initMiro(req, res);
-  const api = miro.as("");
+  const api = miro.as('');
 
-  const boards: string[] = [];
-  for await (const board of api.getAllBoards()) {
-    boards.push(board.name || "");
-    boards.push(board.id || "");
-  }
-  
+  const boardId = req.headers.boardid;
+  const imageId = req.headers.imageid;
+
+  //console.log("boardId: " + boardId);
+  //console.log("imageId: " + imageId);
+
   if (req.method === "GET") {
     try {
       const miroRes = await miro
         .as("")
-        ._api.call("GET", `v2/boards/${boards[1]}/images`);
+        ._api.call("GET", `v2/boards/${boardId}/images/${imageId}`);
+
+      //console.log(miroRes.body);
+
       res.send(miroRes.body);
     } catch (err) {
+      console.log(err);
       res.status(500).send({
         error: err + "Failed to perform api operation",
       });
