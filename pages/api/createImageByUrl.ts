@@ -1,5 +1,4 @@
-export default{}
-/*import initMiro from "../../initMiro";
+import initMiro from "../../initMiro";
 import { NextApiRequest, NextApiResponse } from "next";
 
 // handle redirect with code and exchange it for the access token
@@ -50,4 +49,3 @@ export default async function handler(
     return;
   }
 }
-*/
