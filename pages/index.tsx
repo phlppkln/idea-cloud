@@ -1,10 +1,8 @@
 import {GetServerSideProps} from 'next';
 import {useEffect, useState} from 'react';
 import initMiro from '../initMiro';
-import Image from 'next/image';
 
 import IdeaCloud from './IdeaCloud';
-import { start } from 'repl';
 
 export const getServerSideProps: GetServerSideProps =
   async function getServerSideProps({req}) {
@@ -25,6 +23,8 @@ export const getServerSideProps: GetServerSideProps =
     const boards: string[] = [];
 
     for await (const board of api.getAllBoards()) {
+
+
       boards.push(board.name || '');
     }
 
@@ -35,7 +35,7 @@ export const getServerSideProps: GetServerSideProps =
     };
   };
 
-export default function Main({boards}: {boards: string[]}) {
+export default function Main(/* {boards}: {boards: string[]} */) {
   const [panelOpen, setPanelOpen] = useState(false);
   const [view, setView] = useState(<div></div>);
 

@@ -18,11 +18,11 @@ const IdeaCloud = () => {
   };
 
   const showGameSetupView = () => {
-    setView(<GameSetupView closeView={showStartView} startGame={showGamePlayView}></GameSetupView>);
+    setView(<GameSetupView closeView={showStartView}/*  startGame={showGamePlayView} */></GameSetupView>);
   };
 
   const showGamePlayView = () => {
-    setView(<GamePlayView endGame={showGameAnalysisView} cancelGame={showGameSetupView} showHelp={showDescription}></GamePlayView>);
+    setView(<GamePlayView /* endGame={showGameAnalysisView} cancelGame={showGameSetupView} showHelp={showDescription} */></GamePlayView>);
   };
 
   const showGameAnalysisView = () => {

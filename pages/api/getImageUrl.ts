@@ -7,7 +7,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { miro } = initMiro(req, res);
-  const api = miro.as('');
+  //const api = miro.as('');
 
   const boardId = req.headers.boardid;
   const imageId = req.headers.imageid;
