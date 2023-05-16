@@ -101,16 +101,26 @@ const GameDescriptionView: React.FC<GameDescriptionViewProps> = ({ closeView}) =
             the nodes.
           </li>
           <li>
-            Now ask players to help you organize the images into clusters of
-            images based on their relationship. Involve the group in this
+            Now you start to organize the images into clusters of
+            similar images based on the notes from player. Involve the group in this
             process as much as possible.
           </li>
-          Each image is surrounded by a rectangle that is used to convey the
-          underlying similarity of the notes. These Involve the players in this
-          process as much as possible.
-          <li>
+          <li>Each image is surrounded by a frame that is used to convey the
+          underlying similarity of the notes. A yellow frame indicates that the
+          image is surrounded by images of the same cluster, whereas a blue frame 
+          indicates that neighbors are from a different cluster.
+          The bluer the frame, the more different the neighbors are.</li>
+          <strong>
             Don't let the players spend and inordinate amount of time to cluster
-            the images.{" "}
+            the images.
+          </strong>
+          <li>
+            After the clustering is done, you can find labels for the clusters. You can do this
+            either automatically by pressing the "Find labels" button or manually with suggestions from the group.
+          </li>
+          <li>
+            The game is now finished and you can start to explore the data. To do so, you can
+            use the "Explore Data" in the "Game Analysis Phase" to start the exploration mode.
           </li>
         </ol>
       </div>
