@@ -18,7 +18,7 @@ export default async function handler(
     throw new Error("URL of image is not a string");
   }
 
-  console.log(imageUrl)
+  //console.log(imageUrl)
 
   //console.log("boardId: " + boardId);
   //console.log("imageUrl: " + imageUrl);

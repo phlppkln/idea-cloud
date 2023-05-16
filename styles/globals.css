@@ -1,16 +1,23 @@
-.wrapper {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-img {
-  max-width: 60%;
-  margin: 0 auto;
-  height: auto;
+.main{
+  padding: 0px 20px 0px 20px;
 }
 
 a.button {
   text-decoration: none;
   line-height: 48px;
+}
+
+.game-phase{
+  border: 2px solid var(--indigo400);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  justify-content: center;
+  margin: 20px;
+}
+
+.game-phase > .game-phase-header{
+  font-size: 20px;
 }

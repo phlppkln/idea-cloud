@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { createNodeGridFromImages } from "../../helpers/setupHelper";
+import Image from 'next/image';
 
+import loadingGif from '../../public/loading.gif';
 interface GameSetupViewProps {
   closeView: () => void;
 }
 
 const GameSetupView: React.FC<GameSetupViewProps> = ({ closeView }) => {
+  const [selectedImages, setSelectedImages] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const getImageTitle = async (
     method: string,
@@ -17,7 +22,7 @@ const GameSetupView: React.FC<GameSetupViewProps> = ({ closeView }) => {
     urlTmp.searchParams.set("format", "original");
     imgUrl = urlTmp.toString();
 
-    console.log(imgUrl);
+    //console.log(imgUrl);
 
     const res = await fetch(url, {
       method: method,
@@ -38,7 +43,7 @@ const GameSetupView: React.FC<GameSetupViewProps> = ({ closeView }) => {
 
     try {
       const titleData = await res.json();
-      console.log(titleData);
+      //console.log(titleData);
       return extractTitle(titleData.url);
     } catch (err) {
       console.error(err);
@@ -84,76 +89,134 @@ const GameSetupView: React.FC<GameSetupViewProps> = ({ closeView }) => {
     }
   };
 
-  const restHandler = async () => {
+  const sleep = (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
+
+  const setupGame = async () => {
+    setLoading(true);
+    console.log("game setup started");
     const boardInfo = await miro.board.getInfo();
     const selection = await miro.board.getSelection();
 
+    interface Image {
+      imageId: string;
+      title: string;
+    }
+    let images: Image[] = [];
+
+    //for every selected image, get the image title and build the game grid
     selection.forEach(async (item) => {
       if (item.type == "image") {
-        //for every selected image, get the image title
-        const imgUrl = await getImageUrl(
-          "GET",
-          "/api/getImageUrl",
-          boardInfo.id,
-          item.id
-        );
-        console.log(imgUrl);
-        
-        const imgTitle = await getImageTitle(
-          "GET",
-          "/api/getImageTitle",
-          boardInfo.id,
-          imgUrl
-        );
-        console.log(imgTitle);
+        let imageTitle: string = "";
+        if (item.title != "") {          
+          //if the image has a title, use it
+          imageTitle = item.title;
+        } else {
+          //if the image has no title, get it from the API
+          imageTitle = await getTitleFromAPI(boardInfo.id, item.id);
+        }
+        //push the image to the array
+        images.push({ imageId: item.id, title: imageTitle });
       }
     });
-    //await apiCall("GET", "/api/getImagesTitle", boardInfo.id);
+    //create the game layout
+    setSelectedImages(images);
+    await sleep(10000);
+    if(!await createNodeGridFromImages(images)){
+      await showErrorMessage();
+    };
+    setLoading(false);
   };
 
-  const sdkHandler = async () => {
-    console.log("testSDK");
-    const image = await miro.board.createImage({
-      title: "This is an image",
-      url: "https://miro.com/blog/wp-content/uploads/2020/10/organize-their-Miro-boards-for-trainings-and-workshops.svg",
-      x: 0, // Default value: horizontal center of the board
-      y: 0, // Default value: vertical center of the board
-      width: 800, // Set either 'width', or 'height'
-      rotation: 0.0,
-    });
+  const showErrorMessage = async () => {
+    const errorMessage = {
+      code: 7,
+      action: "Could not build game layout.",
+      followUp: 'Please select the images and try again.',
+    };
+    const errorNotification = `${errorMessage.action} ${errorMessage.followUp} (${errorMessage.code})`;
+    
+await miro.board.notifications.showError(errorNotification);
+  }
 
-    // Output the created item to the developer console
-    console.log(image);
-    return image;
-  };
+
+  const getTitleFromAPI = async (boardId:any, itemId:any) => {
+    const imgUrl = await getImageUrl(
+      "GET",
+      "/api/getImageUrl",
+      boardId,
+      itemId
+    );
+    //console.log(imgUrl);
+
+    let titleTmp = await getImageTitle(
+      "GET",
+      "/api/getImageTitle",
+      boardId,
+      imgUrl
+    );
+    if (titleTmp) {
+      return titleTmp;
+    } else {
+      return "ImageId: " + itemId;
+    }
+  }
+
+  const loadingMessage = () => {
+    if(loading) {
+      return <div style={{display: "flex", alignItems: "center", justifyContent: "center", marginTop: "20px"}}>
+        <Image src={loadingGif} alt="loading" style={{width: "20%", height: "20%"}}/>
+        <p>Loading...</p>
+        </div>
+
+    }
+    else {
+      return <div></div>
+    }
+  }
 
   return (
-    <div>
-      <div>GameSetupView</div>
-      <button
-        className="button button-primary"
-        type="button"
-        onClick={closeView}
-      >
-        Close GameSetupView
-      </button>
+    <div className="grid wrapper">
+      <div className="cs1 ce12">
+        <div onClick={closeView}>
+          {" "}
+          <button
+            className="button button-secondary button-small"
+            type="button"
+          >
+            <span className="icon-back-1"></span>Back
+          </button>{" "}
+        </div>
+        <h1>Game Setup</h1>
+        <p>
+          As a first step, you need to drag your images on the Miro board.
+          Select the images and press the "Setup Game" button. This puts each
+          image into a frame and organizes the nodes in a grid.
+        </p>
 
-      <button
-        className="button button-primary"
-        type="button"
-        onClick={sdkHandler}
-      >
-        Test SDK
-      </button>
-
-      <button
-        className="button button-primary"
-        type="button"
-        onClick={restHandler}
-      >
-        Test REST Api
-      </button>
+        <p>
+          <strong>
+            Important: Only start the game when you have a question you want to
+            explore with the images. Make sure that this questions will generate
+            enough information from the players. Generally speaking, this
+            question should be a question that can be answered with a single
+            word, for example "What do you think...", "What is your impression
+            ...", etc.
+          </strong>
+        </p>
+        <button
+          className="button button-primary"
+          type="button"
+          onClick={setupGame}
+        >
+          Setup Game
+        </button>
+        {loadingMessage()}
+      </div>
     </div>
   );
 };
 export default GameSetupView;
+
+
