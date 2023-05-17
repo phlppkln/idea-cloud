@@ -4,18 +4,22 @@ import initMiro from "../initMiro";
 
 import IdeaCloud from "./IdeaCloud";
 
-export const getServerSideProps: GetServerSideProps =
+/* export const getServerSideProps: GetServerSideProps =
   async function getServerSideProps({ req }) {
     const { miro } = initMiro(req);
 
     // redirect to auth url if user has not authorized the app
     if (!(await miro.isAuthorized(""))) {
+      console.log(miro.getAuthUrl());
       return {
         redirect: {
           destination: miro.getAuthUrl(),
           permanent: false,
         },
       };
+    }
+    else{
+
     }
 
     const api = miro.as("");
@@ -31,7 +35,7 @@ export const getServerSideProps: GetServerSideProps =
         boards,
       },
     };
-  };  
+  };   */
 
 
 export default function Main() {
