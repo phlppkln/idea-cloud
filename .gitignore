@@ -24,4 +24,4 @@ yarn-error.log*
 dist
 
 # data file
-/data
+#/data
