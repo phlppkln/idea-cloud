@@ -1,5 +1,5 @@
 import * as React from "react";
-import IdeaCloud from "./IdeaCloud";
+import DigDeeper from "./DigDeeper";
 
 export default function Panel() {
 
@@ -7,7 +7,7 @@ export default function Panel() {
   return (
     <div className="grid wrapper">
       <div className="cs1 ce12">
-        <IdeaCloud></IdeaCloud>
+        <DigDeeper></DigDeeper>
     </div>
     </div>
   );

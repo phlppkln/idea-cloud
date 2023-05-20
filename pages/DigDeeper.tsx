@@ -7,7 +7,7 @@ import GameSetupView from "./gameViews/GameSetupView";
 import GamePlayView from "./gameViews/GamePlayView";
 import GameAnalysisView from "./gameViews/GameAnalysisView";
 
-const IdeaCloud = () => {
+const DigDeeper = () => {
   const [view, setView] = useState(<div></div>);
 
   useEffect(() => {
@@ -110,4 +110,4 @@ const IdeaCloud = () => {
 
   return <div>{view}</div>;
 };
-export default IdeaCloud;
+export default DigDeeper;

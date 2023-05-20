@@ -2,7 +2,7 @@ import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 import initMiro from "../initMiro";
 
-import IdeaCloud from "./IdeaCloud";
+import DigDeeper from "./DigDeeper";
 
 /* export const getServerSideProps: GetServerSideProps =
   async function getServerSideProps({ req }) {
@@ -69,7 +69,7 @@ export default function Main() {
   return (
     <div className="main" style={{ height: panelHeight, overflowY: "auto"}}>
       <div className="">
-      <IdeaCloud></IdeaCloud>
+      <DigDeeper></DigDeeper>
         </div>
     </div>
   );

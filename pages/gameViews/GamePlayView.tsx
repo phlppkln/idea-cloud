@@ -5,8 +5,8 @@ interface GamePlayViewProps {
   closeView: () => void;
 }
 
-const GamePlayView: React.FC<GamePlayViewProps> = ({ closeView }) => {
-
+const GamePlayView: React.FC<GamePlayViewProps> = () => {
+/* 
   const startClustering = async () => {
     console.log("start clustering");
     
@@ -31,8 +31,8 @@ const GamePlayView: React.FC<GamePlayViewProps> = ({ closeView }) => {
         let similarityVector: number[] = [];
         
       }
-    });
-  };
+    }); 
+  };*/
 
 
   return (
