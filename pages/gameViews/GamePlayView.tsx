@@ -1,58 +1,39 @@
-import React, { useEffect } from 'react'
-import * as relationshipHelper from '../../helpers/relationshipHelper';
+import React, { useEffect, useState } from 'react'
+
+
+//import game play components
+import GamePlayAddNotes from '../components/gamePlay/GamePlayAddNotes';
+import GamePlayCreateClusters from '../components/gamePlay/GamePlayCreateClusters';
+import GamePlayDoClustering from '../components/gamePlay/GamePlayDoClustering';
+import GamePlayFindLabels from '../components/gamePlay/GamePlayFindLabels';
 
 interface GamePlayViewProps {
   closeView: () => void;
 }
 
-const GamePlayView: React.FC<GamePlayViewProps> = () => {
-/* 
-  const startClustering = async () => {
-    console.log("start clustering");
-    
-    const boardInfo = await miro.board.getInfo();
-    const selection = await miro.board.getSelection();
+const GamePlayView: React.FC<GamePlayViewProps> = ({ closeView }) => {
+  const [page, setPage] = useState(<div></div>);
 
-        let clusterNodes: any[] = [];
+  useEffect(() => {
+    openAddNotes();
+  }, []);
 
-    selection.forEach(async (item) => {
-      if (item.type == "frame") {
-        const children = await item.getChildren();
-        let nodeLabels: any[] = [];
+  const openAddNotes = () => {
+    setPage(<GamePlayAddNotes back={closeView} next={openCreateClusters}></GamePlayAddNotes>);
+  };
+  const openCreateClusters = () => {
+    setPage(<GamePlayCreateClusters back={openAddNotes} next={openDoClustering}></GamePlayCreateClusters>);
+  };
 
-        children.forEach((child) => {
-          if (child.type == "sticky_note") {
-            const label = child.content;
-            nodeLabels.push(label);
-          }
-        });
-        
-        //build similarity vector
-        let similarityVector: number[] = [];
-        
-      }
-    }); 
-  };*/
+  const openDoClustering = () => {
+    setPage(<GamePlayDoClustering back={openCreateClusters} next={openFindLabels}></GamePlayDoClustering>);
+  };
+
+  const openFindLabels = () => {
+    setPage(<GamePlayFindLabels back={openDoClustering} next={closeView}></GamePlayFindLabels>);
+  };
 
 
-  return (
-    <div className="main">        <div onClick={closeView}>
-    {" "}
-    <button
-      className="button button-secondary button-small"
-      type="button"
-    >
-      <span className="icon-back-1"></span>Back
-    </button>{" "}
-  </div>
-      <button
-        className="button button-primary"
-        type="button"
-        onClick={startClustering}
-      >
-        Start Clustering
-      </button>
-    </div>
-  );
+  return <div>{page}</div>;
 };
 export default GamePlayView;

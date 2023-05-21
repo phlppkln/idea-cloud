@@ -1,35 +1,21 @@
 import React, { useEffect, useState } from "react";
 
+import GameAnalysis from "../components/gameAnalysis/GameAnalysis";
+
 interface GameAnalysisViewProps {
   closeView: () => void;
 }
 
 const GameAnalysisView: React.FC<GameAnalysisViewProps> = ({ closeView }) => {
-  const openAnalysisModal = async () => {
-    await miro.board.ui.openModal({
-      url: "/modalDescription",
-      fullscreen: true,
-    });
+  const [page, setPage] = useState(<div></div>);
+  useEffect(() => {
+    openAnalysis();
+  }, []);
+
+  const openAnalysis = () => {
+    setPage(<GameAnalysis back={closeView} next={closeView}></GameAnalysis>);
   };
 
-  return (
-    <div className="main">
-      <div>GameAnalysisView</div>
-      <button
-        className="button button-primary"
-        type="button"
-        onClick={openAnalysisModal}
-      >
-        Start Analysis
-      </button>
-      <button
-        className="button button-primary"
-        type="button"
-        onClick={closeView}
-      >
-        Close Game Analysis
-      </button>
-    </div>
-  );
+  return <div>{page}</div>
 };
 export default GameAnalysisView;

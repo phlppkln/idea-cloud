@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 //import game phases
-import GameDescription from "./gameViews/GameDescriptionView";
 import GameSetupView from "./gameViews/GameSetupView";
 import GamePlayView from "./gameViews/GamePlayView";
 import GameAnalysisView from "./gameViews/GameAnalysisView";
@@ -37,10 +36,9 @@ const DigDeeper = () => {
   };
 
   const showGamePlayView = () => {
- /*   setView(
-       <GamePlayView endGame={showGameAnalysisView} cancelGame={showGameSetupView} showHelp={showDescription} 
-      ></GamePlayView> 
-    );*/
+    setView(
+       <GamePlayView closeView={showGameOverview}></GamePlayView> 
+    );
   };
 
   const showGameAnalysisView = () => {
