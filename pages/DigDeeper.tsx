@@ -31,7 +31,7 @@ const DigDeeper = () => {
   const showGameSetupView = () => {
     setView(
       <GameSetupView
-        closeView={showGameOverview} /*  startGame={showGamePlayView} */
+        closeView={showGameOverview}
       ></GameSetupView>
     );
   };

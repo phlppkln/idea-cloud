@@ -55,3 +55,7 @@ a.button {
 .description-modal-content{
   max-width: 1080px;
 }
+
+.textarea{
+  width: 100%;
+}

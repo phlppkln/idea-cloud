@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { createNodeGridFromImages } from "../../../helpers/setupHelper";
-import Image from 'next/image';
+import Image from "next/image";
 
-import loadingGif from '../../public/loading.gif';
-interface GameSetupViewProps {
-  closeView: () => void;
+import loadingGif from "../../../public/loading.gif";
+interface GameSetupPage1Props {
+  back: () => void;
+  next: () => void;
 }
 
-const GameSetupPage1: React.FC<GameSetupViewProps> = ({ closeView }) => {
-  const [selectedImages, setSelectedImages] = useState<any[]>([]);
+const GameSetupPage1: React.FC<GameSetupPage1Props> = ({ back, next }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [userQuestion, setUserQuestion] = useState<string>("");
 
@@ -105,43 +105,69 @@ const GameSetupPage1: React.FC<GameSetupViewProps> = ({ closeView }) => {
     }
     let images: Image[] = [];
 
-    //for every selected image, get the image title and build the game grid
+    let nonImageDetected: boolean = false;
+    //check for non image items in selection
     selection.forEach(async (item) => {
-      if (item.type == "image") {
-        let imageTitle: string = "";
-        if (item.title != "") {          
-          //if the image has a title, use it
-          imageTitle = item.title;
-        } else {
-          //if the image has no title, get it from the API
-          imageTitle = await getTitleFromAPI(boardInfo.id, item.id);
-        }
-        //push the image to the array
-        images.push({ imageId: item.id, title: imageTitle });
+      if (item.type != "image") {
+        nonImageDetected = true;
       }
     });
-    //create the game layout
-    setSelectedImages(images);
-    await sleep(10000);
-    if(!await createNodeGridFromImages(images)){
-      await showErrorMessage();
-    };
+
+    if (nonImageDetected) {
+      showErrorMessageNotOnlyImage();
+      setLoading(false);
+    } else {
+      const setupFinished = false;
+      //for every selected image, get the image title and build the game grid
+      selection.forEach(async (item) => {
+        if (item.type == "image") {
+          let imageTitle: string = "";
+          if (item.title != "") {
+            //if the image has a title, use it
+            imageTitle = item.title;
+          } else {
+            //if the image has no title, get it from the API
+            imageTitle = await getTitleFromAPI(boardInfo.id, item.id);
+          }
+          //push the image to the array
+          images.push({ imageId: item.id, title: imageTitle });
+        }
+      });
+      await sleep(10000);
+      //create the game grid from the images
+      if (await createNodeGridFromImages(images)) {
+        //if setup is finished, go to next page
+        next();
+      } else {
+        //if setup is not finished, show error message
+        await showErrorMessage();
+      }
+    }
+
     setLoading(false);
   };
 
   const showErrorMessage = async () => {
     const errorMessage = {
-      code: 7,
       action: "Could not build game layout.",
-      followUp: 'Please select the images and try again.',
+      followUp: "Please select the images and try again.",
     };
-    const errorNotification = `${errorMessage.action} ${errorMessage.followUp} (${errorMessage.code})`;
-    
+    const errorNotification = `${errorMessage.action} ${errorMessage.followUp}`;
+
     await miro.board.notifications.showError(errorNotification);
-  }
+  };
 
+  const showErrorMessageNotOnlyImage = async () => {
+    const errorMessage = {
+      action: "Detected non-image items in selection.",
+      followUp: "Select only images and try again.",
+    };
+    const errorNotification = `${errorMessage.action} ${errorMessage.followUp}`;
 
-  const getTitleFromAPI = async (boardId:any, itemId:any) => {
+    await miro.board.notifications.showError(errorNotification);
+  };
+
+  const getTitleFromAPI = async (boardId: any, itemId: any) => {
     const imgUrl = await getImageUrl(
       "GET",
       "/api/getImageUrl",
@@ -161,25 +187,36 @@ const GameSetupPage1: React.FC<GameSetupViewProps> = ({ closeView }) => {
     } else {
       return "ImageId: " + itemId;
     }
-  }
+  };
 
   const loadingMessage = () => {
-    if(loading) {
-      return <div style={{display: "flex", alignItems: "center", justifyContent: "center", marginTop: "20px"}}>
-        <Image src={loadingGif} alt="loading" style={{width: "20%", height: "20%"}}/>
-        <p>Loading...</p>
+    if (loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: "20px",
+          }}
+        >
+          <Image
+            src={loadingGif}
+            alt="loading"
+            style={{ width: "20%", height: "20%" }}
+          />
+          <p>Loading...</p>
         </div>
-
+      );
+    } else {
+      return <div></div>;
     }
-    else {
-      return <div></div>
-    }
-  }
+  };
 
   return (
     <div className="grid wrapper">
       <div className="cs1 ce12">
-        <div onClick={closeView}>
+        <div onClick={back}>
           {" "}
           <button
             className="button button-secondary button-small"
@@ -188,23 +225,29 @@ const GameSetupPage1: React.FC<GameSetupViewProps> = ({ closeView }) => {
             <span className="icon-back-1"></span>Back
           </button>{" "}
         </div>
-        <h1>Game Setup</h1>
+        <h1>1. Game Setup</h1>
         <p>
-          As a first step, you need to drag your images on the Miro board.
-          Select the images and press the "Setup Game" button. This puts each
+          As a first step, you need to drag your images on the Miro board. Then,
+          select the images and press the "Setup Game" button. This puts each
           image into a frame and organizes the nodes in a grid.
         </p>
 
         <p>
           <strong>
             Important: Only start the game when you have a question you want to
-            explore with the images. Make sure that this questions will generate
-            enough information from the players. Generally speaking, this
-            question should be a question that can be answered with a single
-            word, for example "What do you think...", "What is your impression
-            ...", etc.
+            explore with the images. Make sure that these questions will
+            generate enough information from the players. This question should
+            be answerable with a single word.
           </strong>
         </p>
+        <div className="form-group">
+          <label htmlFor="user-question">Your Question (optional):</label>
+          <textarea
+            className="textarea"
+            placeholder="Your Question"
+            id="user-question"
+          ></textarea>
+        </div>
         <button
           className="button button-primary"
           type="button"
@@ -217,6 +260,4 @@ const GameSetupPage1: React.FC<GameSetupViewProps> = ({ closeView }) => {
     </div>
   );
 };
-export default GameSetupView;
-
-
+export default GameSetupPage1;
