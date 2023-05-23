@@ -4,7 +4,7 @@ import initMiro from "../initMiro";
 
 import DigDeeper from "./DigDeeper";
 
-/* export const getServerSideProps: GetServerSideProps =
+export const getServerSideProps: GetServerSideProps =
   async function getServerSideProps({ req }) {
     const { miro } = initMiro(req);
 
@@ -35,8 +35,7 @@ import DigDeeper from "./DigDeeper";
         boards,
       },
     };
-  };   */
-
+  };
 
 export default function Main() {
   const [panelHeight, setPanelHeight] = useState("100px");

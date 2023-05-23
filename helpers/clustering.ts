@@ -100,6 +100,7 @@ interface Data {
     return clusters;
   }
   
+export default function startkMeansClustering() {
   // Example usage
   const points: Data[] = [
     { id: "A", vector: [1, 2, 3] },
@@ -120,3 +121,4 @@ interface Data {
     console.log("Points:", clusters[i].points);
     console.log("-----------------------");
   }
+}

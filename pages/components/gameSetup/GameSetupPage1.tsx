@@ -99,6 +99,12 @@ const GameSetupPage1: React.FC<GameSetupPage1Props> = ({ back, next }) => {
     const boardInfo = await miro.board.getInfo();
     const selection = await miro.board.getSelection();
 
+    if(selection.length == 0){
+      await showErrorMessageNoSelection();
+      setLoading(false);
+      return;
+    }
+
     interface Image {
       imageId: string;
       title: string;
@@ -161,6 +167,16 @@ const GameSetupPage1: React.FC<GameSetupPage1Props> = ({ back, next }) => {
     const errorMessage = {
       action: "Detected non-image items in selection.",
       followUp: "Select only images and try again.",
+    };
+    const errorNotification = `${errorMessage.action} ${errorMessage.followUp}`;
+
+    await miro.board.notifications.showError(errorNotification);
+  };
+
+  const showErrorMessageNoSelection = async () => {
+    const errorMessage = {
+      action: "No items selected.",
+      followUp: "Select images and try again.",
     };
     const errorNotification = `${errorMessage.action} ${errorMessage.followUp}`;
 
