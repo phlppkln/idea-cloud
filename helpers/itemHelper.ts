@@ -1,5 +1,9 @@
 import { StickyNoteColor } from "@mirohq/websdk-types";
 
+export function removeTagsFromText(content: string) {
+    return content.replace(/(<([^>]+)>)/gi, "");
+  } 
+
 /**
  * create sticky with text
  * @param content text of sticky

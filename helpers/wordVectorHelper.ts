@@ -1,16 +1,17 @@
-import glovesImport from "../data/glove-6B-50d/smallTestData.json";
+/* import glovesImport from "../data/glove-6B-50d/smallTestData.json";
 //import glovesImport from "../data/glove-6B-50d/glove6b50d.json";
-const gloves = <any>glovesImport;
+const gloves = <any>glovesImport; */
 
 /******* helper functions *******/
-const getWordVector = (word: string) => {
+/* const getWordVector = (word: string) => {
   if (word.length == 0) {
     //TODO: Add error handling for invalid word
     return;
   }
   let vector = gloves[word];
+  console.log("vector", vector)
   return vector;
-};
+}; */
 
 const calculateEuclideanDistance = (vector1: number[], vector2: number[]) => {
   let sum: number = 0;
@@ -147,8 +148,7 @@ export const getUniqueNewWords = (n: number, words: string[]) => {
   return nNewWords;
 };
 
-export const getSimilarityVector = (words: string[]) => {
-
+export const getAverageVectorFromWords = (words: string[]) => {
     // check if all words are in gloves
     words.forEach((word: string) => {
         if (!gloves.hasOwnProperty(word)) {
@@ -161,6 +161,8 @@ export const getSimilarityVector = (words: string[]) => {
     words.forEach((word: string) => {
         vectors.push(getWordVector(word));
     });
+
+    console.log(vectors)
 
     // calculate average vector
     let averageVector: number[] = [];
@@ -175,11 +177,3 @@ export const getSimilarityVector = (words: string[]) => {
     return averageVector;
 }
 
-export const doKMeansClustering = (words: string[], k: number) => {
-    interface Cluster {
-        labels: string[];
-        nodes: any[];
-        centroidVector: number[];
-    }
-
-}

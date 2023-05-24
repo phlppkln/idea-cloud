@@ -105,10 +105,6 @@ const GameSetupPage1: React.FC<GameSetupPage1Props> = ({ back, next }) => {
       return;
     }
 
-    interface Image {
-      imageId: string;
-      title: string;
-    }
     let images: Image[] = [];
 
     let nonImageDetected: boolean = false;
