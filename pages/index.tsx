@@ -8,9 +8,8 @@ export const getServerSideProps: GetServerSideProps =
   async function getServerSideProps({ req }) {
     const { miro } = initMiro(req);
 
-    // redirect to auth url if user has not authorized the app
+    // If the user doesn't authorize the app, redirect to auth URL
     if (!(await miro.isAuthorized(""))) {
-      console.log(miro.getAuthUrl());
       return {
         redirect: {
           destination: miro.getAuthUrl(),
@@ -18,23 +17,29 @@ export const getServerSideProps: GetServerSideProps =
         },
       };
     }
-    else{
-
-    }
 
     const api = miro.as("");
 
-    const boards: string[] = [];
+    try {
+      const { body } = await api._api.call(
+        "GET",
+        "v2-experimental/webhooks/subscriptions"
+      );
 
-    for await (const board of api.getAllBoards()) {
-      boards.push(board.name || "");
+      return {
+        props: {
+          webhooks: (body as any).data,
+        },
+      };
+    } catch (err) {
+      // on error assume auth problem, so re-auth
+      return {
+        redirect: {
+          destination: miro.getAuthUrl(),
+          permanent: false,
+        },
+      };
     }
-
-    return {
-      props: {
-        boards,
-      },
-    };
   };
 
 export default function Main() {

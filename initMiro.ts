@@ -1,40 +1,45 @@
-import {Miro} from '@mirohq/miro-api';
-import {serialize} from 'cookie';
+import { Miro } from "@mirohq/miro-api";
+import { serialize } from "cookie";
 
 function getSerializedCookie(name: string, value: string) {
+  const expires = new Date();
+  expires.setFullYear(expires.getFullYear() + 2);
+
   return serialize(name, value, {
-    path: '/',
+    path: "/",
     httpOnly: true,
-    sameSite: 'none',
+    sameSite: "none",
     secure: true,
+    expires,
   });
 }
 
 export default function initMiro(
-  request: {cookies: Record<string, undefined | string>},
-  response?: {setHeader(name: string, value: string[]): void},
+  request: { cookies: Record<string, undefined | string> },
+  response?: { setHeader(name: string, value: string[]): void }
 ) {
-  const tokensCookie = 'miro_tokens';
+  const tokensCookie = "miro_tokens";
 
-  // setup a Miro instance that loads tokens from cookies
+  // Set up a Miro instance that loads tokens from cookies
   return {
     miro: new Miro({
       storage: {
         get: () => {
-          // Load state (tokens) from a cookie if it's set
+          // If the state (tokens) is set, load it from a cookie
           try {
-            return JSON.parse(request.cookies[tokensCookie] || 'null');
+            return JSON.parse(request.cookies[tokensCookie] || "null");
           } catch (err) {
             return null;
           }
         },
-        set: (_, state) => {
+        set: (_userId, state) => {
           if (!response)
             throw new Error(
-              'initMiro should be invoked with a response object',
+              "initMiro should be invoked with a response object"
             );
-          // store state (tokens) in the cookie
-          response.setHeader('Set-Cookie', [
+          // Store the state (tokens) in the cookie
+          console.log("Setting cookies");
+          response.setHeader("Set-Cookie", [
             getSerializedCookie(tokensCookie, JSON.stringify(state)),
           ]);
         },
