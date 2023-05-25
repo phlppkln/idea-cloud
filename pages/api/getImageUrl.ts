@@ -11,10 +11,7 @@ export default async function handler(
 
   const boardId = req.headers.boardid;
   const imageId = req.headers.imageid;
-
-  //console.log("boardId: " + boardId);
-  //console.log("imageId: " + imageId);
-
+  
   if (req.method === "GET") {
     try {
       const miroRes = await miro

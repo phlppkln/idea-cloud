@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import * as clustering from "../../../helpers/clustering";
 import * as wordVectorHelper from "../../../helpers/wordVectorHelper";
 import * as itemHelper from "../../../helpers/itemHelper";
-import { Frame } from "@mirohq/websdk-types";
+import { Frame, Item } from "@mirohq/websdk-types";
+import { get } from "http";
 
 interface GamePlayCreateClustersProps {
   back: () => void;
@@ -16,6 +17,10 @@ const GamePlayCreateClusters: React.FC<GamePlayCreateClustersProps> = ({
 }) => {
   const [numClusters, setNumClusters] = useState(2);
 
+  const testBtnClicked = async () => {
+    console.log("testBtnClicked");
+  };
+
   const sleep = (ms: number) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
   };
@@ -26,96 +31,130 @@ const GamePlayCreateClusters: React.FC<GamePlayCreateClustersProps> = ({
     await miro.board.setAppData("numClusters", numClustersTmp);
   };
 
+  const selectionValid = async (selection: Item[]) => {
+    let valid = true;
+    selection.forEach(async (item: Item) => {
+      if (item.type === "frame") {
+        const children = await item.getChildren();
+        children.forEach((child: Item) => {
+          if (!(child.type === "sticky_note" || child.type === "image")) {
+            valid = false;
+          }
+        });
+      }
+    });
+    return valid;
+  };
+
   const startClustering = async () => {
-    const boardInfo = await miro.board.getInfo();
     const selection = await miro.board.getSelection();
 
-    if (typeof numClusters === "undefined" || numClusters === null) {
+    //TODO: check if selection is valid
+    /*     if (!await selectionValid(selection)) {
+      await showErrorMessageInvalidSelection();
+      return;
+    } else */ if (typeof numClusters === "undefined" || numClusters === null) {
       await showErrorMessageInvalidNumClusters();
       return;
     } else if (selection.length == 0) {
       await showErrorMessageNoSelection();
       return;
     } else {
-      let maxX: number = 0;
-      let maxY: number = 0;
+      //create a new frame with an image from the selected frame
+      let gridStartX: number = 0;
+      let gridStartY: number = 0;
 
-      // find the position for the new frames
+      // find the starting position for the new frames
       selection.forEach(async (item) => {
         if (item.type === "frame") {
-          if (item.x > maxX) {
-            maxX = item.x;
+          if (item.x > gridStartX) {
+            gridStartX = item.x;
           }
-          if (item.y > maxY) {
-            maxY = item.y;
+          if (item.y > gridStartY) {
+            gridStartY = item.y;
           }
         }
       });
 
-      selection.forEach(async (item) => {
-        if (item.type === "frame") {
-          let frameAverageVector: number[] = [];
-
-          const noteTexts = await getChildNoteTexts(item);
-          console.log(wordVectorHelper.getAverageVectorFromWords(noteTexts));
-
-          console.log("Frame: " + item.title);
-          console.log("Texts: " + noteTexts);
-          console.log("-----------------")
-
-
-          //TODO: create a new frame with an image from the selected frame
-          createFrameWithImage(item, maxX, maxY);
-
-          //TODO:
-        }
-      });
-      // get the vectors from the selected nodes
+      const points = await buildClusterDataPoints(selection);
+      console.log("points: ", points)
 
       //TODO: create clusters
+      const clusters = clustering.kMeansClustering(points, numClusters);
+      console.log("clusters: ", clusters);
       //const clusters: Cluster[] = clustering.testKMeansClustering();
     }
   };
 
-  const getNodeAverageVector = async (words:string) => {
-
-    let nodeVectors: number[][] = [];
-    for(let i = 0; i < words.length; i++){
-      let word = words[i];
-    const wordVector:string = await getWordVector(
-      "GET",
-      "/api/getWordVector",
-      word
-    );
-    //convert to number[]
-    const wordVectorNumber = convertStringToNumberArray(
-      wordVector
-    );
-    nodeVectors.push(wordVectorNumber);
-    }
-
-    
-  };
-
-  const convertStringToNumberArray = (str: string) => {
-    const strArray = str.split(",");
-    const numArray: number[] = [];
-    strArray.forEach((str) => {
-      numArray.push(Number(str));
+  async function buildClusterDataPoints(selection: Item[]) {
+    let points: ClusterDataPoint[] = [];
+    selection.forEach(async (frame) => {
+      if (frame.type === "frame") {
+        const noteTexts = await getChildNoteTexts(frame);
+        console.log(noteTexts);
+        let frameAverageVector: number[] =
+          await wordVectorHelper.getAverageVectorFromWords(noteTexts);
+        console.log("average for ", frame.title, ": ", frameAverageVector);
+        //createClusterNode(frameAverageVector, frame, gridStartX, gridStartY);
+        let point = {
+          id: frame.id,
+          vector: frameAverageVector,
+        };
+        points.push(point);
+      }
     });
-    return numArray;
+    return points;
   };
 
-  const getWordVector = async (
+
+  const createClusterNode = async (
+    frameAverageVector: number[],
+    frame: Frame,
+    positionX: number,
+    positionY: number
+  ) => {
+    const boardInfo = await miro.board.getInfo();
+    const boardId = boardInfo.id;
+    const children = await frame.getChildren();
+
+    children.forEach(async (child) => {
+      if (child.type === "image") {
+        const imageId = child.id;
+        const imgUrl = await getImageUrl(
+          "GET",
+          "/api/getImageUrl",
+          boardId,
+          imageId
+        );
+
+        const image = await miro.board.createImage({
+          title: "This is an image",
+          url: imgUrl,
+          x: 0, // Default value: horizontal center of the board
+          y: 0, // Default value: vertical center of the board
+          width: 800, // Set either 'width', or 'height'
+          rotation: 0.0,
+        });
+
+        //TODO: create a new frame at the position x and y
+        //TODO: add the image to the frame
+        //TODO: add the frame id to the metadata of the board (to be able to identify it for the event listener later)
+      }
+    });
+  };
+
+  const getImageUrl = async (
     method: string,
     url: string,
-    word: string
+    boardId: string,
+    imageId: string
   ) => {
     const res = await fetch(url, {
       method: method,
       headers: {
         "content-type": "application/json",
-        word: "hello",
+        boardId: boardId,
+        imageId: imageId,
       },
     });
     if (res.status !== 200) {
@@ -136,23 +175,6 @@ const GamePlayCreateClusters: React.FC<GamePlayCreateClustersProps> = ({
     }
   };
 
-
-  const createFrameWithImage = async (
-    frame: Frame,
-    positionX: number,
-    positionY: number
-  ) => {
-    const children = await frame.getChildren();
-
-    children.forEach(async (child) => {
-      if (child.type === "image") {
-        //TODO: create a new frame at the position x and y
-        //TODO: add the image to the frame
-        //TODO: add the frame id to the metadata of the board (to be able to identify it for the event listener later)
-      }
-    });
-  };
-
   const getChildNoteTexts = async (frame: Frame) => {
     const children = await frame.getChildren();
 
@@ -164,6 +186,16 @@ const GamePlayCreateClusters: React.FC<GamePlayCreateClustersProps> = ({
       }
     });
     return childNoteTexts;
+  };
+
+  const showErrorMessageInvalidSelection = async () => {
+    const errorMessage = {
+      action: "Invalid selection.",
+      followUp: "Please select frames with images and notes and try again.",
+    };
+    const errorNotification = `${errorMessage.action} ${errorMessage.followUp}`;
+
+    await miro.board.notifications.showError(errorNotification);
   };
 
   const showErrorMessageInvalidNumClusters = async () => {
@@ -235,7 +267,7 @@ const GamePlayCreateClusters: React.FC<GamePlayCreateClustersProps> = ({
           type="button"
           onClick={testBtnClicked}
         >
-          TestAPI
+          Test Clustering
         </button>
       </div>
     </div>

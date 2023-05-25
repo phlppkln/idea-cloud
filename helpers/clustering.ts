@@ -1,7 +1,7 @@
 
 class Cluster {
   centroid: number[];
-  points: Data[];
+  points: ClusterDataPoint[];
 
   constructor(centroid: number[]) {
     this.centroid = centroid;
@@ -12,7 +12,7 @@ class Cluster {
     this.points = [];
   }
 
-  addPoint(point: Data) {
+  addPoint(point: ClusterDataPoint) {
     this.points.push(point);
   }
 }
@@ -33,7 +33,7 @@ const euclideanDistance = (vector1: number[], vector2: number[]) => {
  * @param points points to be assigned to clusters
  * @param clusters clusters to assign points to
  */
-function assignPointsToClusters(points: Data[], clusters: Cluster[]): void {
+function assignPointsToClusters(points: ClusterDataPoint[], clusters: Cluster[]): void {
 
   // iterates over all the data points, calculating the distance to each cluster's centroid
   // and assigning the point to the cluster with the minimum distance.
@@ -119,7 +119,7 @@ function didCentroidsChange(prevCentroids: number[][], currentCentroids: number[
  * @param k 
  * @returns 
  */
-export function kMeansClustering(points: Data[], k: number): Cluster[] {
+export function kMeansClustering(points: ClusterDataPoint[], k: number): Cluster[] {
   // Initialize clusters with random centroids
   const clusters: Cluster[] = [];
   const shuffledPoints = points.slice().sort(() => Math.random() - 0.5);
@@ -161,7 +161,7 @@ export function kMeansClustering(points: Data[], k: number): Cluster[] {
 
 export function testKMeansClustering(): Cluster[] {
   // Example usage
-  const points: Data[] = [
+  const points: ClusterDataPoint[] = [
     { id: "E", vector: [20, 20, 18] },
     { id: "F", vector: [22, 21, 19] },
     { id: "A", vector: [1, 2, 3] },

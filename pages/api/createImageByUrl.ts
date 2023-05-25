@@ -10,9 +10,9 @@ export default async function handler(
   //const api = miro.as('');
 
   const boardId = req.headers.boardid;
-  //const imageUrl = req.headers.imageurl;
+  const imageUrl = req.headers.imageurl;
   const posX = req.headers.posx;
-    const posY = req.headers.posy;
+  const posY = req.headers.posy;
   
 
   const options = {
@@ -20,16 +20,11 @@ export default async function handler(
     headers: {accept: 'application/json', 'content-type': 'application/json'},
     body: JSON.stringify({
       data: {
-        url: 'https://miro.com/static/images/page/mr-index/localization/en/slider/ideation_brainstorming.png'
+        url: imageUrl
       },
       position: {origin: 'center', x: posX, y: posY}
     })
   };
-
-  fetch('https://api.miro.com/v2/boards/board_id/images', options)
-    .then(response => response.json())
-    .then(response => console.log(response))
-    .catch(err => console.error(err));
 
   if (req.method === "POST") {
     try {

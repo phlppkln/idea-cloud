@@ -23,8 +23,6 @@ const GameSetupPage1: React.FC<GameSetupPage1Props> = ({ back, next }) => {
     urlTmp.searchParams.set("format", "original");
     imgUrl = urlTmp.toString();
 
-    //console.log(imgUrl);
-
     const res = await fetch(url, {
       method: method,
       headers: {
@@ -119,7 +117,6 @@ const GameSetupPage1: React.FC<GameSetupPage1Props> = ({ back, next }) => {
       showErrorMessageNotOnlyImage();
       setLoading(false);
     } else {
-      const setupFinished = false;
       //for every selected image, get the image title and build the game grid
       selection.forEach(async (item) => {
         if (item.type == "image") {
@@ -147,6 +144,52 @@ const GameSetupPage1: React.FC<GameSetupPage1Props> = ({ back, next }) => {
     }
 
     setLoading(false);
+  };
+
+  const getTitleFromAPI = async (boardId: any, itemId: any) => {
+    const imgUrl = await getImageUrl(
+      "GET",
+      "/api/getImageUrl",
+      boardId,
+      itemId
+    );
+
+    let titleTmp = await getImageTitle(
+      "GET",
+      "/api/getImageTitle",
+      boardId,
+      imgUrl
+    );
+
+    if (titleTmp) {
+      return titleTmp;
+    } else {
+      return "ImageId: " + itemId;
+    }
+  };
+
+  const loadingMessage = () => {
+    if (loading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: "20px",
+          }}
+        >
+          <Image
+            src={loadingGif}
+            alt="loading"
+            style={{ width: "20%", height: "20%" }}
+          />
+          <p>Loading...</p>
+        </div>
+      );
+    } else {
+      return <div></div>;
+    }
   };
 
   const showErrorMessage = async () => {
@@ -177,52 +220,6 @@ const GameSetupPage1: React.FC<GameSetupPage1Props> = ({ back, next }) => {
     const errorNotification = `${errorMessage.action} ${errorMessage.followUp}`;
 
     await miro.board.notifications.showError(errorNotification);
-  };
-
-  const getTitleFromAPI = async (boardId: any, itemId: any) => {
-    const imgUrl = await getImageUrl(
-      "GET",
-      "/api/getImageUrl",
-      boardId,
-      itemId
-    );
-    //console.log(imgUrl);
-
-    let titleTmp = await getImageTitle(
-      "GET",
-      "/api/getImageTitle",
-      boardId,
-      imgUrl
-    );
-    if (titleTmp) {
-      return titleTmp;
-    } else {
-      return "ImageId: " + itemId;
-    }
-  };
-
-  const loadingMessage = () => {
-    if (loading) {
-      return (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: "20px",
-          }}
-        >
-          <Image
-            src={loadingGif}
-            alt="loading"
-            style={{ width: "20%", height: "20%" }}
-          />
-          <p>Loading...</p>
-        </div>
-      );
-    } else {
-      return <div></div>;
-    }
   };
 
   return (
