@@ -16,6 +16,10 @@ const GamePlayCreateClusters: React.FC<GamePlayCreateClustersProps> = ({
   next,
 }) => {
   const [numClusters, setNumClusters] = useState(2);
+  const [loadingVectors, setLoadingVectors] = useState<boolean>(false);
+  const [clusterDataPoints, setClusterDataPoints] = useState<
+    ClusterDataPoint[]
+  >([]);
 
   const testBtnClicked = async () => {
     console.log("testBtnClicked");
@@ -49,6 +53,7 @@ const GamePlayCreateClusters: React.FC<GamePlayCreateClustersProps> = ({
   const startClustering = async () => {
     const selection = await miro.board.getSelection();
 
+    setLoadingVectors(true);
     //TODO: check if selection is valid
     /*     if (!await selectionValid(selection)) {
       await showErrorMessageInvalidSelection();
@@ -76,36 +81,37 @@ const GamePlayCreateClusters: React.FC<GamePlayCreateClustersProps> = ({
         }
       });
 
-      const points = await buildClusterDataPoints(selection);
-      console.log("points: ", points)
-
-      //TODO: create clusters
-      const clusters = clustering.kMeansClustering(points, numClusters);
-      console.log("clusters: ", clusters);
-      //const clusters: Cluster[] = clustering.testKMeansClustering();
+      buildClusterDataPoints(selection);
     }
   };
 
-  async function buildClusterDataPoints(selection: Item[]) {
+  function buildClusterDataPoints(selection: Item[]) {
+    return new Promise<ClusterDataPoint[]>((resolve, reject) => {
+
     let points: ClusterDataPoint[] = [];
     selection.forEach(async (frame) => {
       if (frame.type === "frame") {
         const noteTexts = await getChildNoteTexts(frame);
-        console.log(noteTexts);
-        let frameAverageVector: number[] =
-          await wordVectorHelper.getAverageVectorFromWords(noteTexts);
-        console.log("average for ", frame.title, ": ", frameAverageVector);
-        //createClusterNode(frameAverageVector, frame, gridStartX, gridStartY);
-        let point = {
-          id: frame.id,
-          vector: frameAverageVector,
-        };
-        points.push(point);
+        wordVectorHelper
+          .getAverageVectorFromWords(noteTexts)
+          .then((vector) => {
+            console.log("average for ", frame.title, ": ", vector);
+            return vector;
+          })
+          .then((vector) => {
+            let point = {
+              id: frame.id,
+              vector: vector,
+            };
+
+            points.push(point);
+            console.log("points: ", points);
+            return points;
+          });
       }
     });
-    return points;
-  };
-
+  });
+  }
 
   const createClusterNode = async (
     frameAverageVector: number[],

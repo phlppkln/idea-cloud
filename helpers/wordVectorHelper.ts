@@ -64,7 +64,9 @@ function getVectorForWord(method: string, url: string, word: string) {
 export const getAverageVectorFromWords = async (words: string[]) => {
   let nodeVectors: number[][] = [];
   for (const word of words) {
+    //console.log('word: ', word)
     let vec = await getVectorForWord("GET", "/api/getWordVector", word);
+    //console.log('vec for: ', word, vec)
     //convert to number[]
     const wordVectorNumber = convertStringToNumberArray(vec);
     nodeVectors.push(wordVectorNumber);
