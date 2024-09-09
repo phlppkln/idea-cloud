@@ -1,4 +1,4 @@
-## DigDeeper: The Power of Collaboration
+## IdeaCloud: The Power of Collaboration
 # Why and How to Use?
 
 ## Datasets

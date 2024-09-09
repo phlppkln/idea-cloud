@@ -8,7 +8,7 @@ const GameDescriptionView: React.FC = ({}) => {
   return (
     <div className="description-modal-container">
       <div className="description-modal-content">
-      <h1>DigDeeper</h1>
+      <h1>IdeaCloud</h1>
       <p>
         Group activities such as brainstorming are invaluable when it comes to
         unlocking new perspectives and ideas. By encouraging participants to
@@ -19,19 +19,19 @@ const GameDescriptionView: React.FC = ({}) => {
         and synthesize the generated ideas.{" "}
       </p>
       <p>
-        Enter DigDeeper — a powerful tool designed to bring order to the chaos
+        Enter IdeaCloud — a powerful tool designed to bring order to the chaos
         of brainstorming sessions. By incorporating computer supported
         visualization techniques, the game enables players and facilitators to
         explore and uncover hidden patterns and insights within their data. It
         transforms the traditional brainstorming process into a dynamic and
         interactive experience by leveraging the infinite canvas. Combining the
         creativity and expertise of a group with the analytical power of
-        computer-supported collaboration, DigDeeper empowers individuals to
+        computer-supported collaboration, IdeaCloud empowers individuals to
         contribute their unique perspectives, while simultaneously providing a
         platform that organizes, clusters, and synthesizes their ideas.{" "}
       </p>
       <p>
-        By embracing DigDeeper you can uncover novel perspectives, identify
+        By embracing IdeaCloud you can uncover novel perspectives, identify
         trends, and make connections that were previously hidden. Empowered by
         the game's ability to surface valuable insights, you'll make better
         decisions, innovate more effectively, and drive your projects forward.
@@ -40,7 +40,7 @@ const GameDescriptionView: React.FC = ({}) => {
       <p>
         Imagine the power of combining the collective perspectives of
         individuals and leveraging cutting-edge digital tools to extract a
-        collective inference. DigDeeper enables players to embark on a journey
+        collective inference. IdeaCloud enables players to embark on a journey
         of discovery, starting with an initial dataset comprised of
         interconnected images. These images can represent a myriad of visual
         datasets, ranging from information visualizations and designs to user
@@ -49,13 +49,13 @@ const GameDescriptionView: React.FC = ({}) => {
       <p>
         Interactive information visualizations let you dive deep into collective
         ideas and explore the interconnected web of associations you may have
-        never considered before. DigDeeper offers to uncover hidden insights and
+        never considered before. IdeaCloud offers to uncover hidden insights and
         patterns, but it also provides facilitators, such as teachers,
         researchers, designers, and workshop leaders, with a valuable tool for
         analyzing and understanding the players' perspectives.
       </p>{" "}
       <p>
-        The potential applications of DigDeeper are vast and versatile. Whether
+        The potential applications of IdeaCloud are vast and versatile. Whether
         you're seeking to understand what people think about different images,
         their associations with them, their likes and dislikes, or even their
         aesthetic preferences, this game enables participants to synthesize

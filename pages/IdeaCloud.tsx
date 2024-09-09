@@ -5,7 +5,7 @@ import GameSetupView from "./gameViews/GameSetupView";
 import GamePlayView from "./gameViews/GamePlayView";
 import GameAnalysisView from "./gameViews/GameAnalysisView";
 
-const DigDeeper = () => {
+const IdeaCloud = () => {
   const [view, setView] = useState(<div></div>);
 
   useEffect(() => {
@@ -52,23 +52,21 @@ const DigDeeper = () => {
 
           <div>
             <p>
-              DigDeeper is a game that lets you explore and discover hidden
-              patterns between images. It uses language-based semantic
-              similarity to sort and cluster information into relationships.
-              Your job, as the facilitator, is to set up and guide the players
-              through the game. After a game is finished you can analyze the
-              collected data with your own tool of choice.
+              Abstracting individual ideas into a collective perspective is a key component of group work and ideation processes.
+              IdeaCloud lets you explore and discover these hidden patterns. It uses language-based semantic
+              similarity to show links between ideas and separate perspecties.
+              This enables individuals to better articulate their own ideas and allows groups to organize spread out information. 
             </p>
             <div onClick={showGameDescriptionModal}>
             {" "}
             <button
               className="button button-secondary button-small"
               type="button"
-            >Open Game Description
+            ><span className="icon icon-help-question"></span>Help
             </button>{" "}
           </div>
 
-            <div className="game-phase">
+            <div className="game-phase game-setup-container">
               <div className="game-phase-header">1. Game Setup</div>
               <p>
                 In the Setup phase, you can prepare your images for the game and
@@ -82,7 +80,7 @@ const DigDeeper = () => {
                 Start Setup
               </button>
             </div>
-            <div className="game-phase">
+            <div className="game-phase game-play-container">
               <div className="game-phase-header">2. Play</div>
               <p>
                 During the Play phase, you play the game with your group. Only
@@ -97,7 +95,7 @@ const DigDeeper = () => {
               </button>
             </div>
             <div>
-              <div className="game-phase">
+              <div className="game-phase game-analysis-container">
                 <div className="game-phase-header">3. Analysis</div>
                 <p>
                   After you finished a game, you can analyze the game and export
@@ -120,4 +118,4 @@ const DigDeeper = () => {
 
   return <div>{view}</div>;
 };
-export default DigDeeper;
+export default IdeaCloud;

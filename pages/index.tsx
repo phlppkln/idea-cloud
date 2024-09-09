@@ -2,7 +2,8 @@ import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 import initMiro from "../initMiro";
 
-import DigDeeper from "./DigDeeper";
+import IdeaCloud from "./IdeaCloud";
+
 
 export const getServerSideProps: GetServerSideProps =
   async function getServerSideProps({ req }) {
@@ -18,34 +19,13 @@ export const getServerSideProps: GetServerSideProps =
       };
     }
 
-    const api = miro.as("");
-
-    try {
-      const { body } = await api._api.call(
-        "GET",
-        "v2-experimental/webhooks/subscriptions"
-      );
-
       return {
-        props: {
-          webhooks: (body as any).data,
-        },
+        props: {},
       };
-    } catch (err) {
-      // on error assume auth problem, so re-auth
-      return {
-        redirect: {
-          destination: miro.getAuthUrl(),
-          permanent: false,
-        },
-      };
-    }
   };
 
 export default function Main() {
   const [panelHeight, setPanelHeight] = useState("100px");
-  
-
 
   useEffect(() => {
     const handleResize = () => {
@@ -66,6 +46,7 @@ export default function Main() {
       });
     });
 
+
     // Remove event listener on cleanup
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -73,7 +54,7 @@ export default function Main() {
   return (
     <div className="main" style={{ height: panelHeight, overflowY: "auto"}}>
       <div className="">
-      <DigDeeper></DigDeeper>
+      <IdeaCloud></IdeaCloud>
         </div>
     </div>
   );
